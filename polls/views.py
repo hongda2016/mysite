@@ -1,6 +1,20 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render,get_object_or_404
+from django.http import HttpResponse,Http404
+from .models import Question
 
 # Create your views here.
 def index(request):
-    return HttpResponse("嘿，哥们，你现在访问的是投票应用的首页。")
+    latest_question_list = Question.objects.order_by('-pub_date')[:5]
+    context = {'latest_question_list':latest_question_list}
+    return render(request,'polls/index.html',context) 
+def detail(request,question_id):
+    question = get_object_or_404(Question,pk=question_id)
+    return render(request,'polls/detail.html',{'question':question})
+
+def results(request,question_id):
+     return HttpResponse("你正在查看的是问题%s的投票结果" %question_id)
+
+def vote(request,question_id):
+     return HttpResponse("你正在为问题%s投票" %question_id)
+
+
